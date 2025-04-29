@@ -2,6 +2,8 @@
 - buka terminal ketikkan
 ```php
 git clone git@github.com:djambred/ksi.git
+atau
+git clone https://github.com/djambred/ksi.git
 ```
 - masuk ke dalam folder yang telah di clone
 ```php

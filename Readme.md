@@ -25,10 +25,13 @@ DB_DATABASE=ksi
 DB_USERNAME=root
 DB_PASSWORD=p455w0rd
 ```
-- chown -R www-data:www-data storage/*
-- chown -R www-data:www-data bootstrap/*
-- php artisan migrate
-- php artisan project:init
+- masih didalam container (docker exec -it ksi bash)
+```php
+chown -R www-data:www-data storage/*
+chown -R www-data:www-data bootstrap/*
+php artisan migrate
+php artisan project:init
+```
 - buka browser dan akses localhost
 - buka postman dan lakukan get ke localhost/api/products
 - set authentication in postman to bearer

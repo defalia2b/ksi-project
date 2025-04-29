@@ -14,6 +14,8 @@ composer install
 mv .env.example .env
 php artisan storage:link
 php artisan key:generate
+exit 
+code .
 ```
 - edit file .env
 ```php 
@@ -35,5 +37,9 @@ php artisan migrate
 php artisan project:init
 ```
 - buka browser dan akses localhost
+```php
+user: admin@admin.com
+pass: password
+```
 - buka postman dan lakukan get ke localhost/api/products
 - set authentication in postman to bearer

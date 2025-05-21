@@ -33,7 +33,12 @@ class ProdukApiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Decrypt input
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate decrypted data
+        $validated = validator($payload, [
             'nama' => 'required|string|max:255',
             'sku' => 'required|string|max:255|unique:produk,sku',
             'kategori_id' => 'required|integer|exists:kategori,id',
@@ -46,8 +51,10 @@ class ProdukApiController extends Controller
             'satuan' => 'required|string|max:50',
             'gambar' => 'nullable|string',
             'status' => 'required|string|max:50',
-        ]);
+        ])->validate();
+
         $produk = Produk::create($validated);
+
         $responseData = [
             'message' => 'Produk created successfully',
             'data' => $produk,
@@ -59,7 +66,13 @@ class ProdukApiController extends Controller
     public function update(Request $request, $id)
     {
         $produk = Produk::findOrFail($id);
-        $validated = $request->validate([
+
+        // Decrypt input
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate decrypted data
+        $validated = validator($payload, [
             'nama' => 'sometimes|required|string|max:255',
             'sku' => 'sometimes|required|string|max:255|unique:produk,sku,' . $produk->id,
             'kategori_id' => 'sometimes|required|integer|exists:kategori,id',
@@ -72,22 +85,13 @@ class ProdukApiController extends Controller
             'satuan' => 'sometimes|required|string|max:50',
             'gambar' => 'nullable|string',
             'status' => 'sometimes|required|string|max:50',
-        ]);
+        ])->validate();
+
         $produk->update($validated);
+
         $responseData = [
             'message' => 'Produk updated successfully',
             'data' => $produk,
-        ];
-        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
-        return response()->json(['data' => $encryptedResponse]);
-    }
-
-    public function destroy($id)
-    {
-        $produk = Produk::findOrFail($id);
-        $produk->delete();
-        $responseData = [
-            'message' => 'Produk deleted',
         ];
         $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
         return response()->json(['data' => $encryptedResponse]);

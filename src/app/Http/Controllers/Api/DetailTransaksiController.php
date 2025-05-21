@@ -31,16 +31,23 @@ class DetailTransaksiApiController extends Controller
         return response()->json(['data' => $encryptedResponse]);
     }
 
+
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'transaksi_id' => 'required|integer|exists:transaksis,id',
             'barang_id' => 'required|integer|exists:produks,id',
             'jumlah' => 'required|integer',
             'harga_satuan' => 'required|numeric',
             'subtotal' => 'required|numeric',
             'keterangan' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $detail = DetailTransaksi::create($validated);
         $responseData = [
             'message' => 'Detail transaksi created successfully',
@@ -53,14 +60,21 @@ class DetailTransaksiApiController extends Controller
     public function update(Request $request, $id)
     {
         $detail = DetailTransaksi::findOrFail($id);
-        $validated = $request->validate([
+
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'transaksi_id' => 'sometimes|required|integer|exists:transaksis,id',
             'barang_id' => 'sometimes|required|integer|exists:produks,id',
             'jumlah' => 'sometimes|required|integer',
             'harga_satuan' => 'sometimes|required|numeric',
             'subtotal' => 'sometimes|required|numeric',
             'keterangan' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $detail->update($validated);
         $responseData = [
             'message' => 'Detail transaksi updated successfully',

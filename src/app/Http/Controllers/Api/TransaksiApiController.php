@@ -33,7 +33,12 @@ class TransaksiApiController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'kode_transaksi' => 'required|string|max:255|unique:transaksis,kode_transaksi',
             'user_id' => 'required|integer|exists:users,id',
             'tipe_transaksi' => 'required|string|max:50',
@@ -41,7 +46,8 @@ class TransaksiApiController extends Controller
             'tanggal_transaksi' => 'required|date',
             'keterangan' => 'nullable|string',
             'status_pembayaran' => 'required|string|max:50',
-        ]);
+        ])->validate();
+
         $transaksi = Transaksi::create($validated);
         $responseData = [
             'message' => 'Transaksi created successfully',
@@ -54,7 +60,13 @@ class TransaksiApiController extends Controller
     public function update(Request $request, $id)
     {
         $transaksi = Transaksi::findOrFail($id);
-        $validated = $request->validate([
+
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'kode_transaksi' => 'sometimes|required|string|max:255|unique:transaksis,kode_transaksi,' . $transaksi->id,
             'user_id' => 'sometimes|required|integer|exists:users,id',
             'tipe_transaksi' => 'sometimes|required|string|max:50',
@@ -62,7 +74,8 @@ class TransaksiApiController extends Controller
             'tanggal_transaksi' => 'sometimes|required|date',
             'keterangan' => 'nullable|string',
             'status_pembayaran' => 'sometimes|required|string|max:50',
-        ]);
+        ])->validate();
+
         $transaksi->update($validated);
         $responseData = [
             'message' => 'Transaksi updated successfully',

@@ -29,16 +29,22 @@ class SupplierApiController extends Controller
         $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
         return response()->json(['data' => $encryptedResponse]);
     }
-
+    
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'nama' => 'required|string|max:255',
             'kontak_person' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'telepon' => 'nullable|string|max:50',
             'alamat' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $supplier = Supplier::create($validated);
         $responseData = [
             'message' => 'Supplier created successfully',
@@ -51,13 +57,20 @@ class SupplierApiController extends Controller
     public function update(Request $request, $id)
     {
         $supplier = Supplier::findOrFail($id);
-        $validated = $request->validate([
+
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'nama' => 'sometimes|required|string|max:255',
             'kontak_person' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'telepon' => 'nullable|string|max:50',
             'alamat' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $supplier->update($validated);
         $responseData = [
             'message' => 'Supplier updated successfully',

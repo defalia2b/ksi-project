@@ -83,6 +83,9 @@ dst..
 
 - **Enkripsi:**  
   Response API pada `ProdukApiController.php`, `TransaksiApiController.php`, dan `DetailTransaksiApiController.php` sudah dienkripsi menggunakan helper `EncryptionHelper`.
+- **Dekripsi Request:**  
+  Semua endpoint yang menerima input (`store`, `update`) sekarang **mendekripsi data request** terlebih dahulu sebelum validasi dan penyimpanan ke database.  
+  Data yang dikirim ke endpoint harus dalam bentuk terenkripsi pada field `data`.
 - **Autentikasi:**  
   Pada file `routes/api.php`, endpoint penting (produk, transaksi, detail-transaksi, penyesuaian-stok) sudah diamankan dengan middleware `client.auth`.  
   Hanya client dengan token valid yang bisa mengakses endpoint ini.

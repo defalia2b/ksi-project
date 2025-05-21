@@ -30,13 +30,19 @@ class KategoriApiController extends Controller
         return response()->json(['data' => $encryptedResponse]);
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'nama' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:kategori,slug',
             'deskripsi' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $kategori = Kategori::create($validated);
         $responseData = [
             'message' => 'Kategori created successfully',
@@ -49,11 +55,18 @@ class KategoriApiController extends Controller
     public function update(Request $request, $id)
     {
         $kategori = Kategori::findOrFail($id);
-        $validated = $request->validate([
+
+        // Decrypt the incoming data
+        $decrypted = EncryptionHelper::decrypt($request->input('data'));
+        $payload = json_decode($decrypted, true);
+
+        // Validate the decrypted payload
+        $validated = validator($payload, [
             'nama' => 'sometimes|required|string|max:255',
             'slug' => 'sometimes|required|string|max:255|unique:kategori,slug,' . $kategori->id,
             'deskripsi' => 'nullable|string',
-        ]);
+        ])->validate();
+
         $kategori->update($validated);
         $responseData = [
             'message' => 'Kategori updated successfully',

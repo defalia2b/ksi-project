@@ -5,17 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use App\Helpers\EncryptionHelper;
 
 class KategoriApiController extends Controller
 {
     public function index()
     {
-        return response()->json(Kategori::all());
+        $responseData = [
+            'message' => 'Success',
+            'data' => Kategori::all(),
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function show($id)
     {
-        return response()->json(Kategori::findOrFail($id));
+        $kategori = Kategori::findOrFail($id);
+        $responseData = [
+            'message' => 'Success',
+            'data' => $kategori,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function store(Request $request)
@@ -26,7 +38,12 @@ class KategoriApiController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
         $kategori = Kategori::create($validated);
-        return response()->json($kategori, 201);
+        $responseData = [
+            'message' => 'Kategori created successfully',
+            'data' => $kategori,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse], 201);
     }
 
     public function update(Request $request, $id)
@@ -38,13 +55,22 @@ class KategoriApiController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
         $kategori->update($validated);
-        return response()->json($kategori);
+        $responseData = [
+            'message' => 'Kategori updated successfully',
+            'data' => $kategori,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function destroy($id)
     {
         $kategori = Kategori::findOrFail($id);
         $kategori->delete();
-        return response()->json(['message' => 'Deleted']);
+        $responseData = [
+            'message' => 'Kategori deleted',
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 }

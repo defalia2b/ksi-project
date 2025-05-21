@@ -5,17 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Helpers\EncryptionHelper;
 
 class SupplierApiController extends Controller
 {
     public function index()
     {
-        return response()->json(Supplier::all());
+        $responseData = [
+            'message' => 'Success',
+            'data' => Supplier::all(),
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function show($id)
     {
-        return response()->json(Supplier::findOrFail($id));
+        $supplier = Supplier::findOrFail($id);
+        $responseData = [
+            'message' => 'Success',
+            'data' => $supplier,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function store(Request $request)
@@ -28,7 +40,12 @@ class SupplierApiController extends Controller
             'alamat' => 'nullable|string',
         ]);
         $supplier = Supplier::create($validated);
-        return response()->json($supplier, 201);
+        $responseData = [
+            'message' => 'Supplier created successfully',
+            'data' => $supplier,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse], 201);
     }
 
     public function update(Request $request, $id)
@@ -42,13 +59,22 @@ class SupplierApiController extends Controller
             'alamat' => 'nullable|string',
         ]);
         $supplier->update($validated);
-        return response()->json($supplier);
+        $responseData = [
+            'message' => 'Supplier updated successfully',
+            'data' => $supplier,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function destroy($id)
     {
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
-        return response()->json(['message' => 'Deleted']);
+        $responseData = [
+            'message' => 'Supplier deleted',
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 }

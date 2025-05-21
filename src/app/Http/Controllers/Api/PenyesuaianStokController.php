@@ -5,17 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\PenyesuaianStok;
 use Illuminate\Http\Request;
+use App\Helpers\EncryptionHelper;
 
 class PenyesuaianStokApiController extends Controller
 {
     public function index()
     {
-        return response()->json(PenyesuaianStok::all());
+        $responseData = [
+            'message' => 'Success',
+            'data' => PenyesuaianStok::all(),
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function show($id)
     {
-        return response()->json(PenyesuaianStok::findOrFail($id));
+        $penyesuaian = PenyesuaianStok::findOrFail($id);
+        $responseData = [
+            'message' => 'Success',
+            'data' => $penyesuaian,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function store(Request $request)
@@ -29,7 +41,12 @@ class PenyesuaianStokApiController extends Controller
             'tanggal_penyesuaian' => 'required|date',
         ]);
         $penyesuaian = PenyesuaianStok::create($validated);
-        return response()->json($penyesuaian, 201);
+        $responseData = [
+            'message' => 'Penyesuaian stok created successfully',
+            'data' => $penyesuaian,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse], 201);
     }
 
     public function update(Request $request, $id)
@@ -44,13 +61,22 @@ class PenyesuaianStokApiController extends Controller
             'tanggal_penyesuaian' => 'sometimes|required|date',
         ]);
         $penyesuaian->update($validated);
-        return response()->json($penyesuaian);
+        $responseData = [
+            'message' => 'Penyesuaian stok updated successfully',
+            'data' => $penyesuaian,
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 
     public function destroy($id)
     {
         $penyesuaian = PenyesuaianStok::findOrFail($id);
         $penyesuaian->delete();
-        return response()->json(['message' => 'Deleted']);
+        $responseData = [
+            'message' => 'Penyesuaian stok deleted',
+        ];
+        $encryptedResponse = EncryptionHelper::encrypt(json_encode($responseData));
+        return response()->json(['data' => $encryptedResponse]);
     }
 }

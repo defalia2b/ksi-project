@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Produk;
+use Illuminate\Http\Request;
+
+class ProdukApiController extends Controller
+{
+    public function index()
+    {
+        return response()->json(Produk::all());
+    }
+
+    public function show($id)
+    {
+        return response()->json(Produk::findOrFail($id));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'sku' => 'required|string|max:255|unique:produk,sku',
+            'kategori_id' => 'required|integer|exists:kategori,id',
+            'supplier_id' => 'required|integer|exists:supplier,id',
+            'deskripsi' => 'nullable|string',
+            'harga_beli' => 'required|numeric',
+            'harga_jual' => 'required|numeric',
+            'stok' => 'required|integer',
+            'berat' => 'nullable|numeric',
+            'satuan' => 'required|string|max:50',
+            'gambar' => 'nullable|string',
+            'status' => 'required|string|max:50',
+        ]);
+        $produk = Produk::create($validated);
+        return response()->json($produk, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $produk = Produk::findOrFail($id);
+        $validated = $request->validate([
+            'nama' => 'sometimes|required|string|max:255',
+            'sku' => 'sometimes|required|string|max:255|unique:produk,sku,' . $produk->id,
+            'kategori_id' => 'sometimes|required|integer|exists:kategori,id',
+            'supplier_id' => 'sometimes|required|integer|exists:supplier,id',
+            'deskripsi' => 'nullable|string',
+            'harga_beli' => 'sometimes|required|numeric',
+            'harga_jual' => 'sometimes|required|numeric',
+            'stok' => 'sometimes|required|integer',
+            'berat' => 'nullable|numeric',
+            'satuan' => 'sometimes|required|string|max:50',
+            'gambar' => 'nullable|string',
+            'status' => 'sometimes|required|string|max:50',
+        ]);
+        $produk->update($validated);
+        return response()->json($produk);
+    }
+
+    public function destroy($id)
+    {
+        $produk = Produk::findOrFail($id);
+        $produk->delete();
+        return response()->json(['message' => 'Deleted']);
+    }
+}

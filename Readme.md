@@ -53,14 +53,8 @@ Beberapa penyesuaian utama meliputi pengaturan ulang `.env`, penambahan model da
       pass: password
       ```
 
-## Rancangan Model Data
+## Rancangan Model Data Barang (No. 6)
 
-### Model Data untuk Data Barang
-- Model: `Barang`
-- Tabel: `barangs`
-- Kolom utama: `kode_barang`, `nama_barang`, `satuan`, `kategori`, `keterangan`, dll.
-
-### Model Data untuk Data Lain
 - Model: `Produk`, `Kategori`, `Supplier`, `Transaksi`, `DetailTransaksi`, `PenyesuaianStok`
 - Setiap model memiliki relasi dan field sesuai kebutuhan aplikasi.
 
@@ -78,7 +72,7 @@ Untuk mengisi data awal ke dalam database, gunakan:
 php artisan db:seed
 ```
 
-## GEnerate Filament Resource
+## Generate Filament Resource
 Untuk setiap model, resource filament dibuat dengan perintah:
 ```sh
 php artisan make:filament-resource Kategori
@@ -98,9 +92,7 @@ dst..
 
 ---
 
-# ARSIP
-
-# INSTRUCTION
+# ARSIP INSTRUCTION
 - buka terminal ketikkan
 ```php
 git clone git@github.com:djambred/ksi.git

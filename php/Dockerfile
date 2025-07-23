@@ -144,9 +144,11 @@ RUN rm -r /var/lib/apt/lists/*
 WORKDIR /var/www
 
 COPY ./docker-entrypoint.sh /usr/local/bin/
+# Perbaiki format line ending dari Windows ke Unix
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN ln -s /usr/local/bin/docker-entrypoint.sh /
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 EXPOSE 9000
 CMD ["php-fpm"]

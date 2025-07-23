@@ -1,5 +1,7 @@
 # Dokumentasi Proyek: Sistem Inventaris dan Kasir (KSI)
 
+Laporan pengerjaan ada pada `Laporan Pengerjaan UAS KI 20230801226.pdf`
+
 ## Studi Kasus: Transformasi Digital "Toko Ritel Jaya Abadi"
 
 ### Latar Belakang
